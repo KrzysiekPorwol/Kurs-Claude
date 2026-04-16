@@ -10,6 +10,10 @@ export default function NoteEditor({ note }: { note: Note }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState(false);
+  const [isPublic, setIsPublic] = useState(note.isPublic);
+  const [publicSlug, setPublicSlug] = useState(note.publicSlug);
+  const [sharing, setSharing] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -18,6 +22,30 @@ export default function NoteEditor({ note }: { note: Note }) {
     content: JSON.parse(note.contentJson),
     immediatelyRender: false,
   });
+
+  async function handleTogglePublic() {
+    setSharing(true);
+    try {
+      const res = await fetch(`/api/notes/${note.id}/share`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublic: !isPublic }),
+      });
+      if (!res.ok) throw new Error();
+      const updated = await res.json();
+      setIsPublic(updated.isPublic);
+      setPublicSlug(updated.publicSlug);
+    } finally {
+      setSharing(false);
+    }
+  }
+
+  async function handleCopy() {
+    if (!publicSlug) return;
+    await navigator.clipboard.writeText(`${window.location.origin}/p/${publicSlug}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   async function handleSave() {
     if (!editor) return;
@@ -68,6 +96,44 @@ export default function NoteEditor({ note }: { note: Note }) {
           <p role="alert" className="text-sm text-red-400">
             Could not save your note. Please try again.
           </p>
+        )}
+      </div>
+
+      {/* Sharing */}
+      <div className="mb-4 flex items-center gap-3 rounded-md border border-neutral-700 bg-neutral-900 px-4 py-3">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isPublic}
+          disabled={sharing}
+          onClick={handleTogglePublic}
+          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none disabled:opacity-50 ${isPublic ? "bg-white" : "bg-neutral-600"}`}
+        >
+          <span
+            className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-neutral-900 shadow transition-transform ${isPublic ? "translate-x-4" : "translate-x-0"}`}
+          />
+        </button>
+        <span className="text-sm text-neutral-300">
+          {isPublic ? "Public" : "Private"}
+        </span>
+        {isPublic && publicSlug && (
+          <>
+            <a
+              href={`/p/${publicSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-2 max-w-[240px] truncate font-mono text-xs text-neutral-400 hover:text-neutral-200"
+            >
+              /p/{publicSlug}
+            </a>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="ml-auto rounded px-2.5 py-1 text-xs font-medium text-neutral-300 transition-colors hover:bg-neutral-700 hover:text-white"
+            >
+              {copied ? "Copied!" : "Copy link"}
+            </button>
+          </>
         )}
       </div>
 

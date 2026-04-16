@@ -81,6 +81,29 @@ export function getNoteByPublicSlug(slug: string): Note | null {
   return row ? toNote(row) : null;
 }
 
+export function setNotePublic(
+  userId: string,
+  noteId: string,
+  isPublic: boolean
+): Note | null {
+  const note = getNoteById(userId, noteId);
+  if (!note) return null;
+
+  if (isPublic) {
+    const slug = note.publicSlug ?? crypto.randomUUID().replace(/-/g, "").slice(0, 20);
+    run(
+      `UPDATE notes SET is_public = 1, public_slug = ?, updated_at = datetime('now') WHERE id = ? AND user_id = ?`,
+      [slug, noteId, userId]
+    );
+  } else {
+    run(
+      `UPDATE notes SET is_public = 0, updated_at = datetime('now') WHERE id = ? AND user_id = ?`,
+      [noteId, userId]
+    );
+  }
+  return getNoteById(userId, noteId);
+}
+
 export function updateNote(
   userId: string,
   noteId: string,
