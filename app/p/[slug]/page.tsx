@@ -22,7 +22,7 @@ export default async function PublicNotePage({
       </div>
 
       <p className="mt-4 text-xs text-neutral-500">
-        Ostatnia zmiana: {new Date(note.updatedAt.replace(" ", "T") + "Z").toLocaleString("pl-PL", { timeZone: "Europe/Warsaw" })}
+        Last updated: {new Date(note.updatedAt.replace(" ", "T") + "Z").toLocaleString("en-GB", { timeZone: "UTC" })}
       </p>
     </main>
   );

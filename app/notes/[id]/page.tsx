@@ -28,7 +28,7 @@ export default async function NoteViewPage({
             href={`/notes/${id}/edit`}
             className="rounded-md bg-white px-4 py-1.5 text-sm font-medium text-neutral-900 hover:bg-neutral-200 transition-colors"
           >
-            Edytuj
+            Edit
           </Link>
           <DeleteNoteButton noteId={id} />
         </div>
@@ -39,7 +39,7 @@ export default async function NoteViewPage({
       </div>
 
       <p className="mt-4 text-xs text-neutral-500">
-        Ostatnia zmiana: {new Date(note.updatedAt.replace(" ", "T") + "Z").toLocaleString("pl-PL", { timeZone: "Europe/Warsaw" })}
+        Last updated: {new Date(note.updatedAt.replace(" ", "T") + "Z").toLocaleString("en-GB", { timeZone: "UTC" })}
       </p>
     </main>
   );

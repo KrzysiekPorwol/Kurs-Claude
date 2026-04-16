@@ -9,9 +9,9 @@ Use the DocsExplorer subagent for efficient documentation lookup.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Auto-commit po ukończeniu zadania
+## Auto-commit after completing a task
 
-Po każdym ukończonym zadaniu (np. zmiana wyglądu, dodanie funkcjonalności, poprawka logiki) wywołaj skill `/git-commit` zdefiniowany w `.claude/skills/git-commit/SKILL.md`. Skill ten tworzy semantyczny commit zgodnie z Conventional Commits na podstawie rzeczywistego diffa.
+After each completed task (e.g. UI change, new feature, logic fix) invoke the `/git-commit` skill defined in `.claude/skills/git-commit/SKILL.md`. The skill creates a semantic commit following Conventional Commits based on the actual diff.
 
 ## Commands
 
