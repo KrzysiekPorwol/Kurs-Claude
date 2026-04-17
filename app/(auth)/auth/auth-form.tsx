@@ -42,7 +42,9 @@ export default function AuthForm({ mode }: Props) {
     if (error) {
       setError(
         mode === "signup"
-          ? "Unable to create account. Please check your details and try again."
+          ? error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL"
+            ? "An account with this email already exists. Try signing in instead."
+            : "Unable to create account. Please check your details and try again."
           : "Invalid email or password."
       );
       setLoading(false);
